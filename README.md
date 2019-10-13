@@ -24,6 +24,11 @@ Or if you are using an environment supporting shellscripts:
 chmod +x start-server
 ./start-server port
 ```
+For example:
+```
+./start-server 8080
+```
+
 
 ## Client
 The client divides work to servers and combines the results to a full image. The image is written to disk as a PGM image file with the name `output.pgm`.
