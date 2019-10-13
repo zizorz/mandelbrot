@@ -55,11 +55,11 @@ mvn exec:exec -Dexec.args="-classpath %classpath MandelbrotClient min_c_re min_c
 ```
 e.g:
 ```
-mvn exec:exec -Dexec.args="-classpath %classpath MandelbrotClient -1 -1.5 2 1.5 1024 1000 1000 4 localhost:8080 localhost:8081"
+mvn exec:exec -Dexec.args="-classpath %classpath MandelbrotClient -2 -1 1 1 1024 1500 1000 4 localhost:8080 localhost:8081"
 ```
 
 Or if using an environment where shellscripts are possible:
 ```
 chmod +x start-client
-./start-client -1 -1.5 2 1.5 1024 1000 1000 4 localhost:8080 localhost:8081
+./start-client -2 -1 1 1 1024 1500 1000 4 localhost:8080 localhost:8081
 ```
