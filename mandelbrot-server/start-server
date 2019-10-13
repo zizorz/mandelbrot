@@ -1,0 +1,2 @@
+mvn exec:exec -Dexec.args="-classpath %classpath MandelbrotServer $*"
+
