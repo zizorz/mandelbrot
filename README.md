@@ -45,7 +45,7 @@ where
 * max_n = the maximum number of iterations until mandelbrot iteration is considered stable
 * x = the width of the image in pixels
 * y = the height of the image in pixels
-* divisions = the size of the subimages sent to the server (e.g. 4 = 4x4 pixels)
+* divisions = the size of the subimages sent to the server (e.g. 40 = 40x40 pixels)
 * list-of-servers = a list of hosts 
 
 To compile the client:
@@ -60,11 +60,11 @@ mvn exec:exec -Dexec.args="-classpath %classpath MandelbrotClient min_c_re min_c
 ```
 e.g:
 ```
-mvn exec:exec -Dexec.args="-classpath %classpath MandelbrotClient -2 -1 1 1 1024 1500 1000 4 localhost:8080 localhost:8081"
+mvn exec:exec -Dexec.args="-classpath %classpath MandelbrotClient -2 -1 1 1 1024 15000 10000 40 localhost:8080 localhost:8081"
 ```
 
 Or if using an environment where shellscripts are possible:
 ```
 chmod +x start-client
-./start-client -2 -1 1 1 1024 1500 1000 4 localhost:8080 localhost:8081
+./start-client -2 -1 1 1 1024 15000 10000 40 localhost:8080 localhost:8081
 ```
