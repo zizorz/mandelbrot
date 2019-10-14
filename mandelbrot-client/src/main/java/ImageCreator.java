@@ -15,7 +15,7 @@ class ImageCreator {
 
     ImageCreator(int height, int width) {
         image = new byte[height][width];
-        totalBytes = height * width;
+        totalBytes = (long)height * (long)width;
         this.nrOfAddedBytes = new AtomicLong();
     }
 
@@ -46,6 +46,6 @@ class ImageCreator {
     }
 
     int getProgress() {
-        return (int)(((nrOfAddedBytes.get()) / (double)totalBytes) * 100);
+        return (int) (((nrOfAddedBytes.get()) / (double)totalBytes) * 100);
     }
 }
