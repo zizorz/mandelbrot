@@ -8,7 +8,7 @@ Constructs an image of the mandelbrot set
 
 
 ## Server
-The server exposes a single endpoint using [Spark](http://sparkjava.com/) that constructs parts of a mandelbrot image 
+The server exposes an endpoint using [Spark](http://sparkjava.com/) that constructs parts of a mandelbrot image 
 
 To compile the server:
 ```
