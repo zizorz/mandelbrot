@@ -1,4 +1,10 @@
 import spark.Request;
+import spark.Response;
+
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.nio.ByteBuffer;
+
 import static spark.Spark.*;
 
 public class MandelbrotServer {
@@ -18,17 +24,16 @@ public class MandelbrotServer {
         port(port);
 
         get("/processors", (req, res) -> {
-           return  Runtime.getRuntime().availableProcessors();
+            var processors = Runtime.getRuntime().availableProcessors();
+            var byteBuffer = ByteBuffer.allocate(4);
+            byteBuffer.putInt(processors);
+            return returnBytes(res, byteBuffer.array());
         });
 
         get("/mandelbrot/:min_c_re/:min_c_im/:max_c_re/:max_c_im/:x/:y/:inf_n", (req, res) -> {
             var input = parseRequest(req);
             var image = MandelbrotImageCreater.createImage(input);
-            res.header("Content-Type", "application/octet-stream");
-            var outputStream = res.raw().getOutputStream();
-            outputStream.flush();
-            outputStream.write(image);
-            return res.raw();
+            return returnBytes(res, image);
         });
     }
 
@@ -53,6 +58,13 @@ public class MandelbrotServer {
         return input;
     }
 
+    private HttpServletResponse returnBytes(Response res, byte[] bytes) throws IOException {
+        res.header("Content-Type", "application/octet-stream");
+        var outputStream = res.raw().getOutputStream();
+        outputStream.flush();
+        outputStream.write(bytes);
+        return res.raw();
+    }
 
 }
 
