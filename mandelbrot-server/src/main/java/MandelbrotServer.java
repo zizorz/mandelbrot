@@ -17,6 +17,10 @@ public class MandelbrotServer {
     private void start(int port) {
         port(port);
 
+        get("/processors", (req, res) -> {
+           return  Runtime.getRuntime().availableProcessors();
+        });
+
         get("/mandelbrot/:min_c_re/:min_c_im/:max_c_re/:max_c_im/:x/:y/:inf_n", (req, res) -> {
             var input = parseRequest(req);
             var image = MandelbrotImageCreater.createImage(input);
