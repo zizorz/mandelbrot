@@ -38,11 +38,6 @@ public class MandelbrotServer implements Server {
         return nrOfProcessors;
     }
 
-    @Override
-    public String getHost() {
-        return this.host;
-    }
-
     private URI constructUri(String path) {
         return URI.create("http://" + this.host + "/" + path);
     }

@@ -11,8 +11,7 @@ public class MandelbrotServer {
 
     public static void main(String[] args ) {
         int port = 8080;
-        if (args.length < 1) {
-        } else {
+        if (args.length >= 1) {
             port = Integer.parseInt(args[0]);
         }
 
@@ -37,7 +36,7 @@ public class MandelbrotServer {
         });
     }
 
-    private static MandelbrotInput parseRequest(Request req) {
+    private MandelbrotInput parseRequest(Request req) {
         var input = new MandelbrotInput();
 
         var minCReal = Float.parseFloat(req.params(":min_c_re"));

@@ -8,6 +8,4 @@ public interface Server {
 
     int getNrOfProcessors();
 
-    String getHost();
-
 }

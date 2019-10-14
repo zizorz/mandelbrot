@@ -108,7 +108,7 @@ class MandelbrotClient {
         return arguments;
     }
 
-    private static String constructPath(ImageWork imageWork) {
+    private String constructPath(ImageWork imageWork) {
         return "mandelbrot" +
                 "/" + imageWork.getMinC().getReal() +
                 "/" + imageWork.getMinC().getImaginary() +
@@ -119,7 +119,7 @@ class MandelbrotClient {
                 "/" + imageWork.getMaxNrOfIterations();
     }
 
-    private static ImageData sendWork(ImageWork imageWork, LoadBalancer loadBalancer, HttpClient httpClient) {
+    private ImageData sendWork(ImageWork imageWork, LoadBalancer loadBalancer, HttpClient httpClient) {
         var path = constructPath(imageWork);
 
         byte[] bytes = loadBalancer.sendGetRequest(path, (data) -> data);
