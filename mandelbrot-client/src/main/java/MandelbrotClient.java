@@ -1,14 +1,17 @@
 import io.reactivex.rxjava3.schedulers.Schedulers;
+import loadbalancer.LoadBalancer;
+import loadbalancer.MandelbrotServer;
+import loadbalancer.IdleQueueLoadBalancer;
+import loadbalancer.Server;
 import models.MandelbrotInput;
 import models.Complex;
 import models.ImageData;
 import models.ImageWork;
 
 import java.io.IOException;
-import java.net.URI;
 import java.net.http.HttpClient;
-import java.net.http.HttpRequest;
-import java.net.http.HttpResponse;
+import java.util.List;
+import java.util.stream.Collectors;
 
 class MandelbrotClient {
 
@@ -35,17 +38,20 @@ class MandelbrotClient {
 
     private MandelbrotClient(MandelbrotInput input) {
         this.input = input;
-        this.loadBalancer = new RandomLoadBalancer();
-        input.getServers().forEach(loadBalancer::addServer);
+        this.httpClient = HttpClient.newHttpClient();
+
+        List<Server> servers = input.getServers().stream().map(host -> new MandelbrotServer(httpClient, host)).collect(Collectors.toList());
+        this.loadBalancer = new IdleQueueLoadBalancer();
+        loadBalancer.addServers(servers);
+
         this.imageWorkDivider = new ImageWorkDivider();
         this.imageCreater = new ImageCreater(input.getHeight(), input.getWidth());
-        this.httpClient = HttpClient.newHttpClient();
     }
 
     private void run() {
         System.out.println("Dividing work on " + input.getServers().size() + " servers...");
         imageWorkDivider.DivideWork(input)
-                .parallel()
+                .parallel(loadBalancer.getNrOfResources())
                 .runOn(Schedulers.io())
                 .map(imageWork -> sendWork(imageWork, loadBalancer, httpClient))
                 .runOn(Schedulers.computation())
@@ -85,8 +91,8 @@ class MandelbrotClient {
         return arguments;
     }
 
-    private static String constructUrl(String server, ImageWork imageWork) {
-        return "http://" + server + "/mandelbrot" +
+    private static String constructPath(ImageWork imageWork) {
+        return "mandelbrot" +
                 "/" + imageWork.getMinC().getReal() +
                 "/" + imageWork.getMinC().getImaginary() +
                 "/" + imageWork.getMaxC().getReal() +
@@ -97,13 +103,9 @@ class MandelbrotClient {
     }
 
     private static ImageData sendWork(ImageWork imageWork, LoadBalancer loadBalancer, HttpClient httpClient) {
-        var server = loadBalancer.getServer();
-        var url = constructUrl(server, imageWork);
+        var path = constructPath(imageWork);
 
-        HttpRequest request = HttpRequest.newBuilder().uri(URI.create(url)).build();
-        byte[] bytes = httpClient.sendAsync(request, HttpResponse.BodyHandlers.ofByteArray())
-                .thenApply(HttpResponse::body)
-                .join();
+        byte[] bytes = loadBalancer.sendGetRequest(path, (data) -> data);
 
         var result = new ImageData();
         result.setBytes(bytes);
