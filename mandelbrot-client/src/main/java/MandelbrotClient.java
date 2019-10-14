@@ -18,7 +18,7 @@ class MandelbrotClient {
     private MandelbrotInput input;
     private LoadBalancer loadBalancer;
     private ImageWorkDivider imageWorkDivider;
-    private ImageCreater imageCreater;
+    private ImageCreator imageCreator;
     private HttpClient httpClient;
 
     public static void main(String[] args) {
@@ -45,7 +45,7 @@ class MandelbrotClient {
         loadBalancer.addServers(servers);
 
         this.imageWorkDivider = new ImageWorkDivider();
-        this.imageCreater = new ImageCreater(input.getHeight(), input.getWidth());
+        this.imageCreator = new ImageCreator(input.getHeight(), input.getWidth());
     }
 
     private void run() {
@@ -58,7 +58,7 @@ class MandelbrotClient {
                 } catch (InterruptedException e) {
                     return;
                 }
-                System.out.println("Constructed approximately " + this.imageCreater.getProgress() + " % of the image.");
+                System.out.println("Constructed approximately " + this.imageCreator.getProgress() + " % of the image.");
             }
         };
 
@@ -70,7 +70,7 @@ class MandelbrotClient {
                 .runOn(Schedulers.io())
                 .map(imageWork -> sendWork(imageWork, loadBalancer, httpClient))
                 .runOn(Schedulers.computation())
-                .doOnNext(imageCreater::addImagePart)
+                .doOnNext(imageCreator::addImagePart)
                 .sequentialDelayError()
                 .blockingSubscribe();
 
@@ -80,7 +80,7 @@ class MandelbrotClient {
 
         var fileName = "output.pgm";
         try {
-            imageCreater.imageToDisk(fileName);
+            imageCreator.imageToDisk(fileName);
         } catch (IOException e) {
             e.printStackTrace();
         }

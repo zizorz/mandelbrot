@@ -7,13 +7,13 @@ import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.util.concurrent.atomic.AtomicLong;
 
-class ImageCreater {
+class ImageCreator {
 
     private volatile byte[][] image;
     private volatile AtomicLong nrOfAddedBytes;
     private long totalBytes;
 
-    ImageCreater(int height, int width) {
+    ImageCreator(int height, int width) {
         image = new byte[height][width];
         totalBytes = height * width;
         this.nrOfAddedBytes = new AtomicLong();
