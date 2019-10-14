@@ -50,6 +50,21 @@ class MandelbrotClient {
 
     private void run() {
         System.out.println("Dividing work on " + input.getServers().size() + " servers...");
+
+        Runnable progressTask = () -> {
+            for(;;) {
+                try {
+                    Thread.sleep(2000);
+                } catch (InterruptedException e) {
+                    return;
+                }
+                System.out.println("Constructed approximately " + this.imageCreater.getProgress() + " % of the image.");
+            }
+        };
+
+        var progressThread = new Thread(progressTask);
+        progressThread.start();
+
         imageWorkDivider.DivideWork(input)
                 .parallel(loadBalancer.getNrOfResources())
                 .runOn(Schedulers.io())
@@ -58,6 +73,8 @@ class MandelbrotClient {
                 .doOnNext(imageCreater::addImagePart)
                 .sequentialDelayError()
                 .blockingSubscribe();
+
+        progressThread.interrupt();
 
         System.out.println("Finished work. Writing image to disk...");
 

@@ -5,13 +5,18 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
+import java.util.concurrent.atomic.AtomicLong;
 
 class ImageCreater {
 
     private volatile byte[][] image;
+    private volatile AtomicLong nrOfAddedBytes;
+    private long totalBytes;
 
     ImageCreater(int height, int width) {
         image = new byte[height][width];
+        totalBytes = height * width;
+        this.nrOfAddedBytes = new AtomicLong();
     }
 
     void addImagePart(ImageData imageData) {
@@ -26,10 +31,7 @@ class ImageCreater {
             var bytesStartPos = i * width;
             System.arraycopy(bytes, bytesStartPos, image[topLeftY + i], topLeftX, width);
         }
-    }
-
-    byte[][] getImage() {
-        return image;
+        nrOfAddedBytes.addAndGet(width * height);
     }
 
     void imageToDisk(String filename) throws IOException {
@@ -41,5 +43,9 @@ class ImageCreater {
         for (byte[] bytes : image) {
             Files.write(file, bytes, StandardOpenOption.APPEND);
         }
+    }
+
+    int getProgress() {
+        return (int)(((nrOfAddedBytes.get()) / (double)totalBytes) * 100);
     }
 }

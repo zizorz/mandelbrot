@@ -7,7 +7,7 @@ import java.util.function.Function;
 
 public class IdleQueueLoadBalancer implements LoadBalancer {
 
-    private BlockingQueue<Server> idleProcessors;
+    volatile private BlockingQueue<Server> idleProcessors;
     private int capacity;
 
     @Override
@@ -19,7 +19,7 @@ public class IdleQueueLoadBalancer implements LoadBalancer {
                 idleProcessors.add(server);
             }
         }
-        System.out.println("Added " + servers.size() + "server(s) with " + this.capacity + " processor(s)");
+        System.out.println("Added " + servers.size() + " server(s) with " + this.capacity + " processor(s)");
     }
 
     @Override
